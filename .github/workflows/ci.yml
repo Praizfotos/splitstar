@@ -1,0 +1,40 @@
+name: SplitStar CI
+on:
+  push:    { branches: [main, develop] }
+  pull_request: { branches: [main] }
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { targets: wasm32-unknown-unknown, components: "clippy,rustfmt" }
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all --all-targets -- -D warnings
+      - run: cargo test --all --features testutils
+      - run: cargo build --target wasm32-unknown-unknown --release --manifest-path contracts/splitstar/Cargo.toml
+      - name: WASM size check (< 128 KB)
+        run: |
+          SIZE=$(du -k target/wasm32-unknown-unknown/release/splitstar_contract.wasm | cut -f1)
+          echo "WASM: ${SIZE} KB"
+          [ "$SIZE" -lt 128 ]
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_CONTRACT_ID: CCPQPKSAD2SPZW3BUTLYXW65VWPBFHXUX2NCXDP4GIJSVYO4RF4PFMWK
+          NEXT_PUBLIC_NETWORK: testnet
+          NEXT_PUBLIC_RPC_URL: https://soroban-testnet.stellar.org
+          NEXT_PUBLIC_HORIZON_URL: https://horizon-testnet.stellar.org
+          NEXT_PUBLIC_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
