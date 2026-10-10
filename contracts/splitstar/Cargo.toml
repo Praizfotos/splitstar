@@ -1,0 +1,18 @@
+[package]
+name        = "splitstar-contract"
+version     = "0.1.0"
+edition     = "2021"
+authors     = ["Praizfotos"]
+description = "Group savings pools and on-chain expense splitting on Stellar Soroban"
+license     = "Apache-2.0"
+repository  = "https://github.com/Praizfotos/splitstar"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default  = []
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = { workspace = true }

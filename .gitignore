@@ -1,0 +1,17 @@
+target/
+**/*.rs.bk
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env
+frontend/.env.local
+frontend/.env*.local
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
+scripts/deployed.*.json
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
