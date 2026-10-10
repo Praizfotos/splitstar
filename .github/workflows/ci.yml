@@ -13,7 +13,7 @@ jobs:
         with: { targets: wasm32-unknown-unknown, components: "clippy,rustfmt" }
       - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --all -- --check
-      - run: cargo clippy --all --all-targets -- -D warnings
+      - run: cargo clippy --all --features testutils --all-targets -- -D warnings
       - run: cargo test --all --features testutils
       - run: cargo build --target wasm32-unknown-unknown --release --manifest-path contracts/splitstar/Cargo.toml
       - name: WASM size check (< 128 KB)
